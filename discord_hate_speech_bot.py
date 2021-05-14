@@ -68,8 +68,21 @@ non-hate speech       0.96      0.98      0.97      5734
 Using Matthews correlation coefficient to measure quality
 MCC-Quality:  0.6691086593088044   
     ```""")
-    embed.add_field(name="Functions", 
-        value="Use `?about` to get this message again.\n Mention this Bot in any message and it will create and embed with its classification.",
+    embed.add_field(name="?about", 
+        value="Use `?about` to get this message again.",
+        inline=False)
+    embed.add_field(name="?reclassify",
+    value = """
+        Use `?reclassify` followed by the text, `|` as delimiter and the label (0 or 1). This will add the data to a pool of data that should be retrained.\n
+        Example for a positive(hate speech) text:\n  `?reclassify this text is hate speech|1`\n
+        Example for a negative(non-hate speech) text:\n `?reclassify this is not hate speech|0`
+        """,
+         inline=False)
+    embed.add_field(name="Mentioning the bot",
+        value="""
+        Mentioning this bot will make it take the text, remove any mentions in it, 
+        then answer with an embed that contains the calculated hate-speech score as well as if is, or not, hate speech
+        """,
         inline=False)
     return embed
 
