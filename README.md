@@ -1,9 +1,9 @@
-### DiscordHateSpeechBot
+# DiscordHateSpeechBot
 This is a TF Model that is trained to classify hate speech. It contains a script to run a bot on discord, that will automatically check posts for their hate-score
 
-### HowTo
+# HowTo
 
-# Installation
+### Installation
 
 Make sure you have every needed library installed. You need:
 - Python
@@ -17,7 +17,7 @@ With pip you can install:
 - sklearn
 - numpy
 
-# Training your first model
+### Training your first model
 
 For that you want to use `tensorflow_model_creation.py`. These are the arguments:
 ```
@@ -49,7 +49,7 @@ The script then does everything by itself, no need for you to intervene. The fir
 `python tensorflow_model_creation.py -r`
 
 
-### Running the discord bot
+## Running the discord bot
 
 First, you need to turn the `.env_template` file into a `.env` file and add your bots token.
 Then, you can run the script with: `python discord_hate_speech_bot.py -l pathToYourSavedModel`
@@ -62,19 +62,19 @@ If you are training your own model, make sure to copy the resulting validation s
 
 ## Functions of the bot
 
-# Automatic Hate Speech Classification
+### Automatic Hate Speech Classification
 
 The bot checks every new message and passed it trough the trained model. If it classifies the text as hate speech, the bot will respond to the message.
 
-# Add classification data
+### Add classification data
 
 Using `?reclassify text|label` where `label` is either `1` or `0`, you can help train the model by adding data to a set that will be used to further improve the model.
 
-# Check a certain text for its score
+### Check a certain text for its score
 
 By tagging the bot in any message, it respond to it with an embed that contains the classification score
 
-## General information
+# General information
 
 The model is a `TensorFlow` RNN and is heavily based on this one:
 https://www.tensorflow.org/tutorials/text/text_classification_rnn
