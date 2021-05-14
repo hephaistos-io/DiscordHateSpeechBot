@@ -44,8 +44,7 @@ def generate_help_embed():
         value="The classification is simple. The models calculated score is checked agains `>=0`, if it passes, it's hate speech", 
         inline=False)
     embed.add_field(name="Wrong classification", 
-        value="As with everything, wrong classifications can't be avoided. There are features being planned, where you can " +
-        "execute a function to give direct feedback - this would then add the message + its classification to the training pool", 
+        value="As with everything, wrong classifications can't be avoided.", 
         inline=False)
     embed.add_field(name="Model", 
         value="The model used was built using TensorFlow and is heavily based on this tutorial: https://www.tensorflow.org/tutorials/text/text_classification_rnn", 

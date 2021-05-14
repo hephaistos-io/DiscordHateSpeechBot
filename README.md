@@ -49,7 +49,7 @@ The script then does everything by itself, no need for you to intervene. The fir
 `python tensorflow_model_creation.py -r`
 
 
-# Running the discord bot
+### Running the discord bot
 
 First, you need to turn the `.env_template` file into a `.env` file and add your bots token.
 Then, you can run the script with: `python discord_hate_speech_bot.py -l pathToYourSavedModel`
@@ -59,6 +59,20 @@ Then, you can run the script with: `python discord_hate_speech_bot.py -l pathToY
 If you are training your own model, make sure to copy the resulting validation scores from the CLI and paste them into the `about` section of the code. If you don't change/remove it, the score will be wrong. 
 
 <hr>
+
+## Functions of the bot
+
+# Automatic Hate Speech Classification
+
+The bot checks every new message and passed it trough the trained model. If it classifies the text as hate speech, the bot will respond to the message.
+
+# Add classification data
+
+Using `?reclassify text|label` where `label` is either `1` or `0`, you can help train the model by adding data to a set that will be used to further improve the model.
+
+# Check a certain text for its score
+
+By tagging the bot in any message, it respond to it with an embed that contains the classification score
 
 ## General information
 
@@ -76,4 +90,3 @@ The dataset for training is being reduced from 6 labels to only 1.
 
 - Make model save a `latest_model` that can be automatically loaded into the bot
 - Make model save validation data so the bot can load it in automatically
-- Create function for users to give direct feedback that allows the addition of new labeled datasets
