@@ -56,17 +56,17 @@ def generate_help_embed():
     embed.add_field(name="How good is the model?",
     value="""This are the current scores of the latest training:\n
     ```
-                     precision    recall  f1-score   support
+                 precision    recall  f1-score   support
 
-non-hate speech       0.96      0.99      0.97      5734
-    hate-speech       0.84      0.64      0.73       649
+non-hate speech       0.96      0.98      0.97      5734
+    hate-speech       0.79      0.62      0.69       649
 
-       accuracy                           0.95      6383
-      macro avg       0.90      0.81      0.85      6383
-   weighted avg       0.95      0.95      0.95      6383
+       accuracy                           0.94      6383
+      macro avg       0.87      0.80      0.83      6383
+   weighted avg       0.94      0.94      0.94      6383
 
 Using Matthews correlation coefficient to measure quality
-MCC-Quality:  0.7091936368873746    
+MCC-Quality:  0.6691086593088044   
     ```""")
     embed.add_field(name="Functions", 
         value="Use `?about` to get this message again.\n Mention this Bot in any message and it will create and embed with its classification.",
