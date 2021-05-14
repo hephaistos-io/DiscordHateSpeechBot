@@ -35,7 +35,7 @@ def generate_hate_score_embed(message, hateScore):
     return embed
 
 def generate_help_embed():
-    embed=discord.Embed(title="Hate Speech Classifier", description="A bot that checks your messages for hate speech", color=0xc62424)
+    embed=discord.Embed(title="Hate Speech Classifier", description="A bot that checks your (english) messages for hate speech", color=0xc62424)
     embed.set_author(name=bot.user.name, icon_url=bot.user.avatar_url)
     embed.add_field(name="Overview", 
         value="The bot checks every new message and runs it trough a trained model, that calculates it's hate score.", 
@@ -83,6 +83,9 @@ MCC-Quality:  0.6691086593088044
         Mentioning this bot will make it take the text, remove any mentions in it, 
         then answer with an embed that contains the calculated hate-speech score as well as if is, or not, hate speech
         """,
+        inline=False)
+    embed.add_field(name="Code",
+        value="All of the code is open source and can be viewed over at its repository. It's also the place to go for issues, feauter requests and discussions. https://github.com/hephaistos-io/DiscordHateSpeechBot",
         inline=False)
     return embed
 
