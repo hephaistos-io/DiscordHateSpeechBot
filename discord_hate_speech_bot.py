@@ -5,6 +5,7 @@ import argparse
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
 import regex as re
+import csv
 
 
 import discord
@@ -85,6 +86,34 @@ MCC-Quality:  0.6691086593088044
         """,
         inline=False)
     return embed
+
+def add_data_for_training(text, label):
+    try:
+        with open('additional_training.csv','a') as csvfile:
+            writer = csv.writer(csvfile, delimiter =',')
+            writer.writerow([text, label])
+            csvfile.close()
+        return True
+    except:
+        print('something went wrong whilst adding data to the file')
+        return False
+
+@bot.command()
+async def reclassify(ctx):
+    try:
+        text = ctx.message.content
+        data = text.replace("?reclassify ", '').split("|")
+        text = data[0]
+        label = int(data[1])
+        if label != 0 and label != 1:
+            await ctx.reply("Bad labels. They have to be 1 for hate speech and 0 for non-hate speech")
+        else:
+            if add_data_for_training(text, label):
+                await ctx.message.add_reaction("✅")
+            else:
+                await ctx.message.add_reaction("❌")
+    except:
+        await ctx.reply("You have to use `|` as a delimiter!")
 
 @bot.command()
 async def about(ctx):
