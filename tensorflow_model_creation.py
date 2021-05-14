@@ -19,12 +19,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, matthews_corrcoef
 import numpy as np
 
-from nltk.corpus import stopwords
-from nltk.stem.snowball import SnowballStemmer
-
-STEMMER = SnowballStemmer("english")
-STOPWORDS = stopwords.words('english')
-
 def read_data(reprocess=False):
     if reprocess:
         print('Processing all the data')
@@ -37,9 +31,6 @@ def read_data(reprocess=False):
                 sys.stderr.write('\r'+str(i))
                 sys.stderr.flush()
                 text = re.findall('\w+', row[1].lower())
-                text = [w for w in text if not w in STOPWORDS]
-                text = [w for w in text if not re.sub('\'\.,','',w).isdigit()]
-                text = [STEMMER.stem(w) for w in text]
                 label = 1 if '1' in row[2:] else 0  # Any hate speach label 
                 X.append(' '.join(text))
                 Y.append(label)

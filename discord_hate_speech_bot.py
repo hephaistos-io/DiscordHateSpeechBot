@@ -22,11 +22,7 @@ MENTION_REGEX = "<@[0-9]+>"
 MENTION_FINDER = re.compile(MENTION_REGEX)
 
 def parse_text(text):
-    text = [w for w in text if not w in STOPWORDS]
-    text = [w for w in text if not re.sub('\'\.,','',w).isdigit()]
-    text = [STEMMER.stem(w) for w in text]
-    text = ' '.join(text)
-    return text
+    return text.lower()
 
 def generate_hate_score_embed(message, hateScore):
     embed=discord.Embed(title="Hate Speech Classifier", description="Checks the hate speech score of your supplied message. This is mostly used for verification", color=0xc62424)
@@ -91,9 +87,8 @@ async def on_message(message):
         return
     
     text = re.sub(MENTION_FINDER, '', message.content)
-    parsed_text = parse_text(text)
-    print(parsed_text)
-    hateScore = model.predict([parsed_text])
+    text = parse_text(text)
+    hateScore = model.predict([text])
     if bot.user in message.mentions:
         await message.reply(embed = generate_hate_score_embed(message, hateScore))
     else:

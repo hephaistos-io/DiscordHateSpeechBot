@@ -12,14 +12,6 @@ Make sure you have every needed library installed. You need:
 With pip you can install:
 
 - matplotlib
-- nltk
-  - you will need to download the stopwords for nltk separately
-  - launch python interactive mode
-  - type in:
-  ```python
-  import nltk
-  nltk.download('stopwords')
-  ```
 - discord py
 - tensorflow
 - sklearn
