@@ -17,6 +17,7 @@ import zipfile
 from collections import Counter
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, matthews_corrcoef
+from sklearn.utils import shuffle
 import numpy as np
 
 def read_data(reprocess=False):
@@ -55,6 +56,38 @@ def save_model(model, path):
 
 def load_model(path):
     return tf.keras.models.load_model(path)
+
+def create_balanced_sets(data, labels, desired_size):
+    print('Balancing data so that we get a 50% split of size ', desired_size)
+    balanced_data = []
+    balanced_labels = []
+    size_per_label = desired_size/2
+    count_positives = 0
+    count_negatives = 0
+    for d, l in zip(data, labels):
+        if l == 1 and count_positives < size_per_label:
+            count_positives += 1
+            balanced_labels.append(l)
+            balanced_data.append(d)
+        elif count_negatives < size_per_label:
+            count_negatives += 1
+            balanced_labels.append(l)
+            balanced_data.append(d)
+        
+        if len(balanced_data) == desired_size:
+            break
+    
+    if count_negatives != count_positives:
+        print('Could not balance data, there arent enough values to assert equal distribution!')
+        return data, labels
+
+    
+    print('Calculating balance')
+    for label, count_ in Counter(balanced_labels).items():
+        print(label, ':', round(100*(count_/len(balanced_data)), 2))
+    
+    return balanced_data, balanced_labels
+
 
 def create_figure(history, path):
     print('Creating history figure and saving with as ' + path)
@@ -117,6 +150,9 @@ def create_model(encoder):
 def train_model(model, train_dataset, test_dataset, epoch):
     history = model.fit(train_dataset, epochs=epoch,
                     validation_data=test_dataset,
+    history = model.fit(train_dataset.repeat(), epochs=epoch,
+                    steps_per_epoch=400,
+                    validation_data=test_dataset.repeat(),
                     validation_steps=30)
 
     test_loss, test_acc = model.evaluate(test_dataset)
@@ -135,6 +171,8 @@ def parse_args(argv):
     parser = argparse.ArgumentParser(description="Train tensorflow-network on hate-speech")
     parser.add_argument('-ds', '--downsample', help="downsample data, has to be a float between (0, 1) (exclusive)", type=float, default=0.8)
     parser.add_argument('-d', '--debug', help="turns debug on", action="store_true")
+    parser.add_argument('-b', '--balance', help="Creates a balanced set of the given value for the data to achieve a 50\% split of the binary labels", 
+        type=int, default=0)
     parser.add_argument('-c', '--cpu', help="sets runmode to cpu only", action="store_true")
     parser.add_argument('-e', '--epochs', help="sets how many epochs the model shall train", type=int, default=10)
     parser.add_argument('-r', '--reprocess', help="activates the reprocessing of the training data. Has to be run the first time!", action="store_true")
@@ -171,12 +209,23 @@ def main(argv):
     print('Finished loading data')
 
     trainTestSplit = 0.2
+    if args.downsample > 0.0:
+        print('Downsampling data, only using ' + str(1-args.downsample))
+        X, X_, Y, Y_ = train_test_split(X_complete, Y_complete, test_size=args.downsample, random_state=args.randomstate, stratify=Y_complete)
+    else:
+        print('Not downsampling initial dataset, shuffling it')
+        X, Y = shuffle(X_complete, Y_complete, random_state=args.randomstate)
 
     print('Downsampling data, only using ' + str(1-args.downsample))
     X, X_, Y, Y_ = train_test_split(X_complete, Y_complete, test_size=args.downsample, random_state=args.randomstate, stratify=Y_complete)
+    if args.balance > 0:
+        X_bal, Y_bal = create_balanced_sets(X, Y, args.balance)
+    else:
+        X_bal = X
+        Y_bal = Y
 
     print('Splitting data, to ' + str(1-trainTestSplit) + ' training data and using the remainder for testing')
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=trainTestSplit, random_state=args.randomstate, stratify=Y)
+    X_train, X_test, Y_train, Y_test = train_test_split(X_bal, Y_bal, test_size=trainTestSplit, random_state=args.randomstate, stratify=Y_bal)
     
     if debug: 
         print("train size: ", len(X_train))
@@ -241,8 +290,11 @@ def main(argv):
         savename = 'models/tf_model' + str(datetime.now())
         save_model(model, savename)
     
+    print('Creating validation data set from all avaliable data...')
+    X = turn_data_to_tensor(X)
+    Y = turn_data_to_tensor(Y)
     print('Validating model')
-    validate_model(model, X_test, Y_test)
+    validate_model(model, X, Y)
 
 
     if debug:
