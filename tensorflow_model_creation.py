@@ -39,7 +39,7 @@ def read_data(reprocess=False):
         pickle.dump(X, open('X_tfsp.pkl', 'wb'))
         pickle.dump(Y, open('Y_tfsp.pkl', 'wb'))
     else:
-        print('Loading preprocessed data')
+        print('Loading already preprocessed data')
         X = pickle.load(open('X_tfsp.pkl', 'rb'))
         Y = pickle.load(open('Y_tfsp.pkl', 'rb'))
     if debug:
@@ -148,8 +148,6 @@ def create_model(encoder):
     return model
 
 def train_model(model, train_dataset, test_dataset, epoch):
-    history = model.fit(train_dataset, epochs=epoch,
-                    validation_data=test_dataset,
     history = model.fit(train_dataset.repeat(), epochs=epoch,
                     steps_per_epoch=400,
                     validation_data=test_dataset.repeat(),
@@ -184,7 +182,7 @@ def parse_args(argv):
 
 def main(argv):
 
-    print('HateSpeech Training with Tensorflow')
+    print('HateSpeechClassification Training with Tensorflow')
 
     global debug
     args = parse_args(argv)
@@ -216,8 +214,6 @@ def main(argv):
         print('Not downsampling initial dataset, shuffling it')
         X, Y = shuffle(X_complete, Y_complete, random_state=args.randomstate)
 
-    print('Downsampling data, only using ' + str(1-args.downsample))
-    X, X_, Y, Y_ = train_test_split(X_complete, Y_complete, test_size=args.downsample, random_state=args.randomstate, stratify=Y_complete)
     if args.balance > 0:
         X_bal, Y_bal = create_balanced_sets(X, Y, args.balance)
     else:
@@ -232,7 +228,7 @@ def main(argv):
         print("test size: ", len(X_test))
 
     
-    print('Preparing verification data')
+    print('Preparing testing data')
     X_test = turn_data_to_tensor(X_test, tf.string)
     Y_test = turn_data_to_tensor(Y_test, tf.int64)
 
@@ -252,7 +248,7 @@ def main(argv):
         print('Loading existing model')
         model = tf.keras.models.load_model(args.load)
         if args.continuetraining:
-            print('Retraining model')
+            print('Continue model training')
             model, history = train_model(model, train_dataset, test_dataset, args.epochs) 
             if args.epochs > 1:
                 create_figure(history, "models/graphs/tf_model" + str(datetime.now()) + "_retrained.png")
